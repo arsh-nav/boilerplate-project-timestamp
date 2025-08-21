@@ -40,7 +40,7 @@ app.get("/api/:date", (req, res) => {
     date = new Date(dateParam);
   }
   else{
-    res.json({ error : "Invalid Date" });sdf
+    res.json({ error : "Invalid Date" });
   }
   res.json({ unix: date.getTime(), utc: date.toUTCString() });
 });
