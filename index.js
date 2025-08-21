@@ -8,6 +8,7 @@ var app = express();
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
+const req = require('express/lib/request');
 app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
 
 // http://expressjs.com/en/starter/static-files.html
@@ -24,37 +25,18 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
     // Case 1: no date → return current time
-    app.get("/api", (req, res) => {
+    app.get("/api",  (req,res)=>{
       const now = new Date();
-      res.json({
-        unix: now.getTime(),
-        utc: now.toUTCString()
-      });
+      res.json({unix: now.getTime(), utc: now.toUTCString()})
     });
-
-    // Case 2: with date param
-    app.get("/api/:date", (req, res) => {
-      let dateParam = req.params.date;
-      let date;
-
-      // If dateParam is only digits → treat as unix timestamp
-      if (/^\d+$/.test(dateParam)) {
-        date = new Date(parseInt(dateParam));
-      } else {
-        date = new Date(dateParam);
-      }
-
-      // Check validity
-      if (date.toString() === "Invalid Date") {
-        return res.json({ error: "Invalid Date" });
-      }
-
-      res.json({
-        unix: date.getTime(),
-        utc: date.toUTCString()
-      });
-    });
-
+// Case 2: date as a string
+app.get("/api/:date", (req, res) =>{
+  const dateParam = req.params.date;
+  const date = /ˆ\d+$/.test(dateParam)
+              ? new Date(parseInt (dateParam))
+              : new Date(dateParam);
+  res.json({unix:date.getTime(), utc: date.toUTCString()});
+});
 
 
 
