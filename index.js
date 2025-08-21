@@ -31,11 +31,16 @@ app.get("/api", (req, res) => {
 // Case 2: date as a string
 app.get("/api/:date", (req, res) => {
   let dateParam = req.params.date;
-  let date = /ˆ\d+$/.test(dateParam)
-    ? new Date(parseInt(dateParam))
-    : new Date(dateParam);
-  if (date instanceof Date && !isNaN(date)) {
-    return res.json({ error: "Invalid Date" });
+  let date;
+  if (!isNaN(parseInt(dateParam))) {
+    // it's a number (unix timestamp in ms)
+    date = new Date(parseInt(dateParam));
+  } else if(dateParam instanceof Date && !isNaN(dateParam)){
+    // it's a string (try parsing directly)
+    date = new Date(dateParam);
+  }
+  else{
+    res.json({ error : "Invalid Date" });sdf
   }
   res.json({ unix: date.getTime(), utc: date.toUTCString() });
 });
